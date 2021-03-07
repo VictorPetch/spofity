@@ -1,15 +1,15 @@
 import 'dart:convert';
-
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-
+import 'package:random_color/random_color.dart';
 import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
 }
+
+RandomColor _randomColor = RandomColor();
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -28,11 +28,16 @@ class MusicApp extends StatefulWidget {
 }
 
 class _MusicAppState extends State<MusicApp> {
-  //we will need some variables
   bool playing = false; // at the begining we are not playing any song
-  IconData playBtn = Icons.play_arrow; // the main state of the play button icon
-
-  // #region
+  IconData playBtn =
+      Icons.play_arrow_outlined; // the main state of the play button icon
+  var someImages = [];
+  var possibleFormats = ['.flac,.jpg'];
+  List<String> coverList = ['Von.jpg',];
+  List<String> trackList = ['Von.flac',];
+  String currentTrack = "";
+  int index = 0;
+  // #region Music player setup
   //Now let's start by creating our music player
   //first let's declare some object
   AudioPlayer _player;
@@ -65,7 +70,7 @@ class _MusicAppState extends State<MusicApp> {
   @override
   void initState() {
     _initImages();
-    // TODO: implement initState
+
     super.initState();
     _player = AudioPlayer();
     cache = AudioCache(fixedPlayer: _player);
@@ -87,93 +92,67 @@ class _MusicAppState extends State<MusicApp> {
     };
   }
 
+  Color randomBlue;
+  @override
+  void didChangeDependencies() {
+    randomBlue = _randomColor.randomColor(colorHue: ColorHue.blue);
+    super.didChangeDependencies();
+  }
   // #endregion
 
-  var someImages = [];
-  var possibleFormats = ['.flac,.jpg'];
-
-  Future _initImages() async {
-    // >> To get paths you need these 2 lines
-    final manifestContent =
-        await rootBundle.loadString('AssetManifest.json');
-
-    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-    // >> To get paths you need these 2 lines
-
-    final flacList = manifestMap.keys
-        .where((String key) => key.contains((new RegExp(r'.flac'))))
-        .toList();
-    final jpgList = manifestMap.keys
-        .where((String key) => key.contains((new RegExp(r'.jpg'))))
-        .toList();
-    flacList.forEach((String value){someImages.add(value);});
-    jpgList.forEach((String value){someImages.add(value);});
-    print(someImages);
-    // setState(() {
-    // });
-  }
-  
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       //let's start by creating the main UI of the app
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
               colors: [
-                Colors.blue[800],
-                Colors.blue[200],
+                Colors.black,
+                randomBlue,
               ]),
         ),
         child: Padding(
           padding: EdgeInsets.only(
-            top: 48.0,
+            top: 18.0,
           ),
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
                 //Let's add some text title
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
+                // #region
+                Center(
                   child: Text(
-                    "Music Beats",
+                    "Playing Now",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 38.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    "Listen to your favorite Music",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w400,
+                      fontSize: 23.0,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 24.0,
                 ),
+                // #endregion
+                
                 //Let's add the music cover
+                // #region 
                 Center(
                   child: Container(
+                    margin: EdgeInsets.only(top: 30),
                     width: 280.0,
                     height: 280.0,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30.0),
                         image: DecorationImage(
-                          image: AssetImage("assets/Von.jpg"),
+                          image: AssetImage("assets/${coverList[index]}"),
                         )),
                   ),
                 ),
@@ -182,7 +161,7 @@ class _MusicAppState extends State<MusicApp> {
                 ),
                 Center(
                   child: Text(
-                    "Stargazer",
+                    trackList[index].split('.')[0],
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 32.0,
@@ -193,15 +172,10 @@ class _MusicAppState extends State<MusicApp> {
                 SizedBox(
                   height: 30.0,
                 ),
+                // #endregion
+               
                 Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
-                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -235,34 +209,36 @@ class _MusicAppState extends State<MusicApp> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            // #region Skip previous
                             IconButton(
                               iconSize: 45.0,
-                              color: Colors.blue,
+                              color: Colors.white,
                               onPressed: () {
                                 print(someImages);
                               },
                               icon: Icon(
-                                Icons.skip_previous,
+                                Icons.skip_previous_outlined,
                               ),
                             ),
+                            // #endregion
+
+                            // #region Play
                             IconButton(
                               iconSize: 62.0,
-                              color: Colors.blue[800],
+                              color: Colors.white,
                               onPressed: () {
-
-
                                 //here we will add the functionality of the play button
                                 if (!playing) {
                                   //now let's play the song
                                   cache.play("Von.flac");
                                   setState(() {
-                                    playBtn = Icons.pause;
+                                    playBtn = Icons.pause_outlined;
                                     playing = true;
                                   });
                                 } else {
                                   _player.pause();
                                   setState(() {
-                                    playBtn = Icons.play_arrow;
+                                    playBtn = Icons.play_arrow_outlined;
                                     playing = false;
                                   });
                                 }
@@ -271,14 +247,17 @@ class _MusicAppState extends State<MusicApp> {
                                 playBtn,
                               ),
                             ),
+                            // #endregion
+
+                            // #region Skip next
                             IconButton(
                               iconSize: 45.0,
-                              color: Colors.blue,
+                              color: Colors.white,
                               onPressed: () {},
-                              icon: Icon(
-                                Icons.skip_next,
-                              ),
+                              icon: Icon(Icons.skip_next_outlined),
                             ),
+
+                            // #endregion
                           ],
                         )
                       ],
@@ -291,5 +270,29 @@ class _MusicAppState extends State<MusicApp> {
         ),
       ),
     );
+  }
+
+  Future _initImages() async {
+    // >> To get paths you need these 2 lines
+    final manifestContent = await rootBundle.loadString('AssetManifest.json');
+
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+    // >> To get paths you need these 2 lines
+
+    final flacList = manifestMap.keys
+        .where((String key) => key.contains((new RegExp(r'.flac'))))
+        .toList();
+    final jpgList = manifestMap.keys
+        .where((String key) => key.contains((new RegExp(r'.jpg'))))
+        .toList();
+    flacList.forEach((String value) {
+      someImages.add(value);
+    });
+    jpgList.forEach((String value) {
+      someImages.add(value);
+    });
+    print(someImages);
+    // setState(() {
+    // });
   }
 }
