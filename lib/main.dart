@@ -4,7 +4,8 @@ import 'package:spofity/playMusic.dart';
 import 'package:random_color/random_color.dart';
 
 void main() {
-  runApp(MaterialApp(home: MenuScreen()));
+  runApp(MaterialApp(home: MenuScreen(),
+  debugShowCheckedModeBanner: false,));
 }
 
 class MenuScreen extends StatefulWidget {
@@ -148,12 +149,15 @@ class _MenuScreenState extends State<MenuScreen> {
                   margin: EdgeInsets.only(top: 15),
                   // color: Colors.blue,
                   child: GridView.count(
+                    shrinkWrap: true,
+                    childAspectRatio: 0.8,
                     crossAxisCount: 2,
                     children: searchController.text.isEmpty
                         ? List.generate(trackList.length, (index) {
                             randomBlue1 = _randomColor.randomColor(
                                 colorHue: ColorHue.purple,
                                 colorBrightness: ColorBrightness.dark);
+
                             return Column(
                               children: [
                                 Container(
@@ -177,20 +181,29 @@ class _MenuScreenState extends State<MenuScreen> {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  trackList[index].split('.')[0].split('-')[1],
-                                  style: TextStyle(
-                                      fontSize: 20, color: Colors.white),
+                                Container(
+                                  height: heigth*0.035,
+                                  // color: Colors.red,
+                                  child: Text(
+                                    trackList[index].split('.')[0].split('-')[1],
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.white),
+                                  ),
                                 ),
-                                Text(
-                                  trackList[index].split('.')[0].split('-')[0],
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.white.withOpacity(0.5)),
+                                Container(
+                                  height: heigth*0.035,
+                                  // color: Colors.blue,
+                                  child: Text(
+                                    trackList[index].split('.')[0].split('-')[0],
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white.withOpacity(0.5)),
+                                  ),
                                 ),
                               ],
                             );
                           })
+                          
                         : List.generate(filteredList.length, (index) {
                             int originalIndex = trackList.indexOf(filteredList[index]);
 

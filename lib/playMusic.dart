@@ -119,6 +119,20 @@ class _MusicAppState extends State<MusicApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        centerTitle: true,
+        title: Container(
+          child: Text(
+            "Playing Now",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 23.0,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
       //let's start by creating the main UI of the app
       body: Container(
         width: double.infinity,
@@ -142,37 +156,7 @@ class _MusicAppState extends State<MusicApp> {
               children: [
                 //Let's add some text title
                 // #region
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 85),
-                        child: Text(
-                          "Playing Now",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 23.0,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 24.0,
-                ),
+                
                 // #endregion
 
                 //Let's add the music cover
